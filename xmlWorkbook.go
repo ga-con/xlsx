@@ -194,10 +194,14 @@ func getWorksheetFromSheet(sheet xlsxSheet, worksheets map[string]*zip.File, she
 	if error != nil {
 		return nil, error
 	}
+
 	decoder = xml.NewDecoder(rc)
 	error = decoder.Decode(worksheet)
 	if error != nil {
 		return nil, error
 	}
+
+	fmt.Println("getWorksheetFromSheet:", worksheet)
+
 	return worksheet, nil
 }

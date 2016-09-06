@@ -294,11 +294,13 @@ type xlsxF struct {
 
 // Create a new XLSX Worksheet with default values populated.
 // Strictly for internal use only!
+//
+// Config for landscape: FitToPage = true, HorizontalCentered = true, Orientation = "landscape", UsePrinterDefaults = true
 func newXlsxWorksheet() (worksheet *xlsxWorksheet) {
 	worksheet = &xlsxWorksheet{}
 	worksheet.SheetPr.FilterMode = false
 	worksheet.SheetPr.PageSetUpPr = make([]xlsxPageSetUpPr, 1)
-	worksheet.SheetPr.PageSetUpPr[0] = xlsxPageSetUpPr{FitToPage: false}
+	worksheet.SheetPr.PageSetUpPr[0] = xlsxPageSetUpPr{FitToPage: true} // print land
 	worksheet.SheetViews.SheetView = make([]xlsxSheetView, 1)
 	worksheet.SheetViews.SheetView[0] = xlsxSheetView{
 		ColorId:                 64,
@@ -306,7 +308,7 @@ func newXlsxWorksheet() (worksheet *xlsxWorksheet) {
 		RightToLeft:             false,
 		Selection:               make([]xlsxSelection, 1),
 		ShowFormulas:            false,
-		ShowGridLines:           true,
+		ShowGridLines:           false,
 		ShowOutlineSymbols:      true,
 		ShowRowColHeaders:       true,
 		ShowZeros:               true,
@@ -318,31 +320,34 @@ func newXlsxWorksheet() (worksheet *xlsxWorksheet) {
 		ZoomScale:               100,
 		ZoomScaleNormal:         100,
 		ZoomScalePageLayoutView: 100}
+
 	worksheet.SheetViews.SheetView[0].Selection[0] = xlsxSelection{
 		Pane:         "topLeft",
 		ActiveCell:   "A1",
 		ActiveCellId: 0,
 		SQRef:        "A1"}
+
 	worksheet.SheetFormatPr.DefaultRowHeight = 12.85
 	worksheet.PrintOptions.Headings = false
 	worksheet.PrintOptions.GridLines = false
 	worksheet.PrintOptions.GridLinesSet = true
-	worksheet.PrintOptions.HorizontalCentered = false
+	worksheet.PrintOptions.HorizontalCentered = true // print land
 	worksheet.PrintOptions.VerticalCentered = false
-	worksheet.PageMargins.Left = 0.7875
-	worksheet.PageMargins.Right = 0.7875
-	worksheet.PageMargins.Top = 1.05277777777778
-	worksheet.PageMargins.Bottom = 1.05277777777778
-	worksheet.PageMargins.Header = 0.7875
-	worksheet.PageMargins.Footer = 0.7875
+
+	worksheet.PageMargins.Left = 0.25
+	worksheet.PageMargins.Right = 0.25
+	worksheet.PageMargins.Top = 0.75
+	worksheet.PageMargins.Bottom = 0.75
+	worksheet.PageMargins.Header = 0.3
+	worksheet.PageMargins.Footer = 0.3
 	worksheet.PageSetUp.PaperSize = "9"
 	worksheet.PageSetUp.Scale = 100
 	worksheet.PageSetUp.FirstPageNumber = 1
 	worksheet.PageSetUp.FitToWidth = 1
-	worksheet.PageSetUp.FitToHeight = 1
+	worksheet.PageSetUp.FitToHeight = 0
 	worksheet.PageSetUp.PageOrder = "downThenOver"
-	worksheet.PageSetUp.Orientation = "portrait"
-	worksheet.PageSetUp.UsePrinterDefaults = false
+	worksheet.PageSetUp.Orientation = "landscape" // print land
+	worksheet.PageSetUp.UsePrinterDefaults = true // print land
 	worksheet.PageSetUp.BlackAndWhite = false
 	worksheet.PageSetUp.Draft = false
 	worksheet.PageSetUp.CellComments = "none"

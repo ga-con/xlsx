@@ -8,6 +8,13 @@
 ** Introduction
 xlsx is a library to simplify reading and writing the XML format used
 by recent version of Microsoft Excel in Go programs.
+*** Print config with "landscape" 
+- Fit width scale
+- Print "landscape"
+
+*** Read from template file
+- Support read header
+- Fix showGridLines
 
 The support for writing XLSX files is currently extremely minimal.  It
 will expand slowly, but in the meantime patches are welcome!

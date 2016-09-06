@@ -3,21 +3,27 @@ package xlsx
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Sheet is a high level structure intended to provide user access to
 // the contents of a particular sheet within an XLSX file.
 type Sheet struct {
-	Name        string
-	File        *File
-	Rows        []*Row
-	Cols        []*Col
-	MaxRow      int
-	MaxCol      int
-	Hidden      bool
-	Selected    bool
-	SheetViews  []SheetView
-	SheetFormat SheetFormat
+	Name          string
+	File          *File
+	Rows          []*Row
+	Cols          []*Col
+	MaxRow        int
+	MaxCol        int
+	Hidden        bool
+	Selected      bool
+	SheetViews    []SheetView
+	SheetFormat   SheetFormat
+	ShowGridLines bool
+	OddHeader     string
+	FitToPage     bool
+	PageSetUp     xlsxPageSetUp
+	PageMargins   xlsxPageMargins
 }
 
 type SheetView struct {
@@ -191,6 +197,25 @@ func (s *Sheet) makeXLSXSheet(refTable *RefTable, styles *xlsxStyleSheet) *xlsxW
 		worksheet.SheetViews.SheetView[0].TabSelected = true
 	}
 
+	if s.ShowGridLines == true {
+		worksheet.SheetViews.SheetView[0].ShowGridLines = true
+	}
+
+	if len(s.OddHeader) > 0 {
+		worksheet.HeaderFooter.OddHeader[0].Content = s.OddHeader
+	}
+
+	worksheet.SheetPr.PageSetUpPr[0].FitToPage = s.FitToPage
+
+	worksheet.PageMargins = s.PageMargins
+	worksheet.PageSetUp = s.PageSetUp
+
+	if strings.EqualFold(worksheet.PageSetUp.Orientation, "landscape") == true {
+		worksheet.SheetPr.PageSetUpPr[0].FitToPage = true
+		worksheet.PageSetUp.UsePrinterDefaults = true
+		worksheet.PageSetUp.FitToWidth = 1
+	}
+
 	if s.SheetFormat.DefaultRowHeight != 0 {
 		worksheet.SheetFormatPr.DefaultRowHeight = s.SheetFormat.DefaultRowHeight
 	}
@@ -337,6 +362,9 @@ func (s *Sheet) makeXLSXSheet(refTable *RefTable, styles *xlsxStyleSheet) *xlsxW
 		dimension.Ref = "A1"
 	}
 	worksheet.Dimension = dimension
+
+	fmt.Println("PageSetUp:", worksheet.PageSetUp.Orientation)
+
 	return worksheet
 }
 

@@ -670,6 +670,22 @@ func readSheetFromFile(sc chan *indexedSheet, index int, rsheet xlsxSheet, fi *F
 	sheet.SheetFormat.OutlineLevelCol = worksheet.SheetFormatPr.OutlineLevelCol
 	sheet.SheetFormat.OutlineLevelRow = worksheet.SheetFormatPr.OutlineLevelRow
 
+	// Read gridlines option
+	if len(worksheet.SheetViews.SheetView) > 0 {
+		sheet.ShowGridLines = worksheet.SheetViews.SheetView[0].ShowGridLines
+	}
+
+	// Read header content
+	if len(worksheet.HeaderFooter.OddHeader) > 0 {
+		sheet.OddHeader = worksheet.HeaderFooter.OddHeader[0].Content
+	}
+
+	sheet.PageMargins = worksheet.PageMargins
+
+	// Print "landscape"
+	sheet.FitToPage = worksheet.SheetPr.PageSetUpPr[0].FitToPage
+	sheet.PageSetUp = worksheet.PageSetUp
+
 	result.Sheet = sheet
 	sc <- result
 }

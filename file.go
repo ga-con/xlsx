@@ -178,6 +178,13 @@ func replaceRelationshipsNameSpace(workbookMarshal string) string {
 	return strings.Replace(newWorkbook, oldXmlns, newXmlns, 1)
 }
 
+// replaceWorksheetNameSpace print option issue
+func replaceWorksheetNameSpace(worksheetMarshal string) string {
+	oldXmlns := `<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">`
+	newXmlns := `<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">`
+	return strings.Replace(worksheetMarshal, oldXmlns, newXmlns, 1)
+}
+
 // Construct a map of file name to XML content representing the file
 // in terms of the structure of an XLSX file.
 func (f *File) MarshallParts() (map[string]string, error) {
@@ -194,7 +201,10 @@ func (f *File) MarshallParts() (map[string]string, error) {
 		if err != nil {
 			return "", err
 		}
-		return xml.Header + string(body), nil
+
+		outputStr := replaceWorksheetNameSpace(string(body))
+
+		return strings.Replace(xml.Header, `<?xml version="1.0" encoding="UTF-8"?>`, `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`, -1) + outputStr, nil
 	}
 
 	parts = make(map[string]string)
@@ -205,7 +215,9 @@ func (f *File) MarshallParts() (map[string]string, error) {
 		f.styles = newXlsxStyleSheet(f.theme)
 	}
 	f.styles.reset()
+
 	for _, sheet := range f.Sheets {
+
 		xSheet := sheet.makeXLSXSheet(refTable, f.styles)
 		rId := fmt.Sprintf("rId%d", sheetIndex)
 		sheetId := strconv.Itoa(sheetIndex)
@@ -223,6 +235,7 @@ func (f *File) MarshallParts() (map[string]string, error) {
 			Id:      rId,
 			State:   "visible"}
 		parts[partName], err = marshal(xSheet)
+
 		if err != nil {
 			return parts, err
 		}
