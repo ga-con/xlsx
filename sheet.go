@@ -363,8 +363,6 @@ func (s *Sheet) makeXLSXSheet(refTable *RefTable, styles *xlsxStyleSheet) *xlsxW
 	}
 	worksheet.Dimension = dimension
 
-	fmt.Println("PageSetUp:", worksheet.PageSetUp.Orientation)
-
 	return worksheet
 }
 

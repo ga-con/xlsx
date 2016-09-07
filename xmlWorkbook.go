@@ -201,7 +201,5 @@ func getWorksheetFromSheet(sheet xlsxSheet, worksheets map[string]*zip.File, she
 		return nil, error
 	}
 
-	fmt.Println("getWorksheetFromSheet:", worksheet)
-
 	return worksheet, nil
 }

@@ -63,6 +63,23 @@ func lettersToNumeric(letters string) int {
 	return sum
 }
 
+// LettersToNumeric is used to convert a character based column
+// reference to a zero based numeric column identifier.
+func LettersToNumeric(letters string) int {
+	sum, mul, n := 0, 1, 0
+	for i := len(letters) - 1; i >= 0; i, mul, n = i-1, mul*26, 1 {
+		c := letters[i]
+		switch {
+		case 'A' <= c && c <= 'Z':
+			n += int(c - 'A')
+		case 'a' <= c && c <= 'z':
+			n += int(c - 'a')
+		}
+		sum += n * mul
+	}
+	return sum
+}
+
 // Get the largestDenominator that is a multiple of a basedDenominator
 // and fits at least once into a given numerator.
 func getLargestDenominator(numerator, multiple, baseDenominator, power int) (int, int) {
@@ -166,6 +183,20 @@ func intOnlyMapF(rune rune) rune {
 // coordinates from a cell name in Excel format, e.g. the cellIDString
 // "A1" returns 0, 0 and the "B3" return 1, 2.
 func getCoordsFromCellIDString(cellIDString string) (x, y int, error error) {
+	var letterPart string = strings.Map(letterOnlyMapF, cellIDString)
+	y, error = strconv.Atoi(strings.Map(intOnlyMapF, cellIDString))
+	if error != nil {
+		return x, y, error
+	}
+	y -= 1 // Zero based
+	x = lettersToNumeric(letterPart)
+	return x, y, error
+}
+
+// GetCoordsFromCellIDString returns the zero based cartesian
+// coordinates from a cell name in Excel format, e.g. the cellIDString
+// "A1" returns 0, 0 and the "B3" return 1, 2.
+func GetCoordsFromCellIDString(cellIDString string) (x, y int, error error) {
 	var letterPart string = strings.Map(letterOnlyMapF, cellIDString)
 	y, error = strconv.Atoi(strings.Map(intOnlyMapF, cellIDString))
 	if error != nil {

@@ -20,3 +20,10 @@ func (r *Row) AddCell() *Cell {
 	r.Sheet.maybeAddCol(len(r.Cells))
 	return cell
 }
+
+// AddCellToRow add from exist
+func (r *Row) AddCellToRow(cell *Cell) {
+	cell.Row = r
+	r.Cells = append(r.Cells, cell)
+	r.Sheet.maybeAddCol(len(r.Cells))
+}
