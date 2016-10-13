@@ -2,6 +2,15 @@ package xlsx
 
 import (
 	"fmt"
+	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -24,6 +33,8 @@ type Sheet struct {
 	FitToPage     bool
 	PageSetUp     xlsxPageSetUp
 	PageMargins   xlsxPageMargins
+	Drawings      []Drawing
+	Index         int
 }
 
 type SheetView struct {
@@ -362,8 +373,83 @@ func (s *Sheet) makeXLSXSheet(refTable *RefTable, styles *xlsxStyleSheet) *xlsxW
 		dimension.Ref = "A1"
 	}
 	worksheet.Dimension = dimension
+	worksheet.Drawing.SetId(1)
 
 	return worksheet
+}
+
+// InsertImage from path
+// Support from URL or filesystem
+// rowCount = 0 for dynamic height
+func (s *Sheet) InsertImage(imagePath string, row, col, rowCount, colCount int) error {
+
+	fileName := imagePath // Full path file
+
+	if _, err := url.ParseRequestURI(imagePath); err == nil {
+		// http URL
+		// don't worry about errors
+		resp, err := http.Get(imagePath)
+		defer resp.Body.Close()
+
+		if err != nil {
+			return err
+		}
+
+		tmpfile, err := ioutil.TempFile("", "gmaps")
+		if err != nil {
+			return err
+		}
+
+		defer os.Remove(tmpfile.Name()) // clean up
+		// Use io.Copy to just dump the response body to the file. This supports huge files
+		if _, err = io.Copy(tmpfile, resp.Body); err != nil {
+			return err
+		}
+
+		if err := tmpfile.Close(); err != nil {
+			return err
+		}
+		fileName = tmpfile.Name()
+	}
+
+	if imageFileData, err := ioutil.ReadFile(fileName); err == nil {
+		if reader, err := os.Open(fileName); err == nil {
+			if im, formatName, err := image.DecodeConfig(reader); err == nil {
+				var imageType ImageType
+				switch formatName {
+				case "jpg", "jpeg":
+					imageType = IMAGE_TYPE_JPG
+				case "png":
+					imageType = IMAGE_TYPE_PNG
+				case "gif":
+					imageType = IMAGE_TYPE_GIF
+				}
+
+				drawing := Drawing{
+					s,
+					imageFileData,
+					imageType,
+					DrawingCell{
+						row,
+						col,
+					},
+					rowCount,
+					colCount,
+					im.Width,
+					im.Height,
+				}
+				s.Drawings = append(s.Drawings, drawing)
+			} else {
+				return err
+			}
+		} else {
+			return err
+		}
+	} else {
+		return err
+	}
+
+	return nil
 }
 
 func handleStyleForXLSX(style *Style, NumFmtId int, styles *xlsxStyleSheet) (XfId int) {

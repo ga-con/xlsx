@@ -2,6 +2,7 @@ package xlsx
 
 import (
 	"encoding/xml"
+	"fmt"
 	"strings"
 )
 
@@ -22,6 +23,17 @@ type xlsxWorksheet struct {
 	PageMargins   xlsxPageMargins   `xml:"pageMargins"`
 	PageSetUp     xlsxPageSetUp     `xml:"pageSetup"`
 	HeaderFooter  xlsxHeaderFooter  `xml:"headerFooter"`
+	Drawing       *worksheetDrawing `xml:"drawing,omitempty"`
+}
+
+type worksheetDrawing struct {
+	DrawingIdStr string `xml:"r:id,attr"`
+	DrawingId    int    `xml:"-"`
+}
+
+func (d *worksheetDrawing) SetId(id int) {
+	d.DrawingId = id
+	d.DrawingIdStr = fmt.Sprintf("rId%d", id)
 }
 
 // xlsxHeaderFooter directly maps the headerFooter element in the namespace
@@ -292,6 +304,10 @@ type xlsxF struct {
 	Si      int    `xml:"si,attr,omitempty"`  // Shared formula index
 }
 
+type xlsxWorksheetDrawing struct {
+	Id int `xml:"r:id,attr"`
+}
+
 // Create a new XLSX Worksheet with default values populated.
 // Strictly for internal use only!
 //
@@ -359,6 +375,7 @@ func newXlsxWorksheet() (worksheet *xlsxWorksheet) {
 	worksheet.HeaderFooter.OddHeader[0] = xlsxOddHeader{Content: `&C&"Times New Roman,Regular"&12&A`}
 	worksheet.HeaderFooter.OddFooter = make([]xlsxOddFooter, 1)
 	worksheet.HeaderFooter.OddFooter[0] = xlsxOddFooter{Content: `&C&"Times New Roman,Regular"&12Page &P`}
+	worksheet.Drawing = new(worksheetDrawing)
 
 	return
 }

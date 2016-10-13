@@ -23,7 +23,7 @@ type xlsxDefault struct {
 
 func MakeDefaultContentTypes() (types xlsxTypes) {
 	types.Overrides = make([]xlsxOverride, 8)
-	types.Defaults = make([]xlsxDefault, 2)
+	types.Defaults = make([]xlsxDefault, 5)
 
 	types.Overrides[0].PartName = "/_rels/.rels"
 	types.Overrides[0].ContentType = "application/vnd.openxmlformats-package.relationships+xml"
@@ -46,5 +46,12 @@ func MakeDefaultContentTypes() (types xlsxTypes) {
 	types.Defaults[0].ContentType = "application/vnd.openxmlformats-package.relationships+xml"
 	types.Defaults[1].Extension = "xml"
 	types.Defaults[1].ContentType = "application/xml"
+	types.Defaults[2].Extension = "jpeg"
+	types.Defaults[2].ContentType = "image/jpeg"
+	types.Defaults[3].Extension = "png"
+	types.Defaults[3].ContentType = "image/png"
+	types.Defaults[4].Extension = "gif"
+	types.Defaults[4].ContentType = "image/gif"
+
 	return
 }
