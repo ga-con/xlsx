@@ -191,7 +191,7 @@ type xlsxSheetPr struct {
 // currently I have not checked it for completeness - it does as much
 // as I need.
 type xlsxPageSetUpPr struct {
-	FitToPage bool `xml:"fitToPage,attr"`
+	FitToPage int `xml:"fitToPage,attr"`
 }
 
 // xlsxCols directly maps the cols element in the namespace
@@ -316,7 +316,7 @@ func newXlsxWorksheet() (worksheet *xlsxWorksheet) {
 	worksheet = &xlsxWorksheet{}
 	worksheet.SheetPr.FilterMode = false
 	worksheet.SheetPr.PageSetUpPr = make([]xlsxPageSetUpPr, 1)
-	worksheet.SheetPr.PageSetUpPr[0] = xlsxPageSetUpPr{FitToPage: true} // print land
+	worksheet.SheetPr.PageSetUpPr[0] = xlsxPageSetUpPr{FitToPage: 1} // print land
 	worksheet.SheetViews.SheetView = make([]xlsxSheetView, 1)
 	worksheet.SheetViews.SheetView[0] = xlsxSheetView{
 		ColorId:                 64,

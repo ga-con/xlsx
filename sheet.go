@@ -30,7 +30,7 @@ type Sheet struct {
 	SheetFormat   SheetFormat
 	ShowGridLines bool
 	OddHeader     string
-	FitToPage     bool
+	FitToPage     int
 	PageSetUp     xlsxPageSetUp
 	PageMargins   xlsxPageMargins
 	Drawings      []Drawing
@@ -222,7 +222,7 @@ func (s *Sheet) makeXLSXSheet(refTable *RefTable, styles *xlsxStyleSheet) *xlsxW
 	worksheet.PageSetUp = s.PageSetUp
 
 	if strings.EqualFold(worksheet.PageSetUp.Orientation, "landscape") == true {
-		worksheet.SheetPr.PageSetUpPr[0].FitToPage = true
+		worksheet.SheetPr.PageSetUpPr[0].FitToPage = 1
 		worksheet.PageSetUp.UsePrinterDefaults = true
 		worksheet.PageSetUp.FitToWidth = 1
 	}
