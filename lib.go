@@ -714,7 +714,9 @@ func readSheetFromFile(sc chan *indexedSheet, index int, rsheet xlsxSheet, fi *F
 	sheet.PageMargins = worksheet.PageMargins
 
 	// Print "landscape"
-	sheet.FitToPage = worksheet.SheetPr.PageSetUpPr[0].FitToPage
+	if len(worksheet.SheetPr.PageSetUpPr) > 0 {
+		sheet.FitToPage = worksheet.SheetPr.PageSetUpPr[0].FitToPage
+	}
 	sheet.PageSetUp = worksheet.PageSetUp
 
 	result.Sheet = sheet

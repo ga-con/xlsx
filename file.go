@@ -136,7 +136,7 @@ func (f *File) AddSheet(sheetName string) (*Sheet, error) {
 
 func (f *File) makeWorkbook() xlsxWorkbook {
 	return xlsxWorkbook{
-		FileVersion: xlsxFileVersion{AppName: "Go XLSX"},
+		FileVersion: xlsxFileVersion{AppName: "iTracking XLSX"},
 		WorkbookPr:  xlsxWorkbookPr{ShowObjects: "all"},
 		BookViews: xlsxBookViews{
 			WorkBookView: []xlsxWorkBookView{
