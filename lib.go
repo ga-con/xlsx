@@ -705,7 +705,7 @@ func readSheetFromFile(sc chan *indexedSheet, index int, rsheet xlsxSheet, fi *F
 	if len(worksheet.SheetViews.SheetView) > 0 {
 		sheet.ShowGridLines = worksheet.SheetViews.SheetView[0].ShowGridLines
 	}
-
+	
 	// Read header content
 	if len(worksheet.HeaderFooter.OddHeader) > 0 {
 		sheet.OddHeader = worksheet.HeaderFooter.OddHeader[0].Content
